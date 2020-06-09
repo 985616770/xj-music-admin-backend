@@ -1,6 +1,7 @@
 const Koa = require('koa')
 const Router = require('koa-router')
 const cors = require('koa2-cors')
+const koaBody = require('koa-body')
 
 const app = new Koa()
 const router = new Router()
@@ -14,16 +15,24 @@ app.use(
     credentials: true
   })
 )
+
+// 接受post参数解析
+app.use(
+  koaBody({
+    multipart: true
+  })
+)
 // 全局中间件
 app.use(async (ctx, next) => {
-  console.log('全局中间件')
   ctx.state.env = ENV
   await next()
 })
 
 const playlist = require('./controller/playlist.js')
+const swiper = require('./controller/swiper.js')
 
 router.use('/playlist', playlist.routes())
+router.use('/swiper', swiper.routes())
 
 app.use(router.routes())
 app.use(router.allowedMethods())

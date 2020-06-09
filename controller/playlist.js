@@ -24,7 +24,7 @@ router.get('/list', async (ctx, next) => {
 router.get('/getById', async (ctx, next) => {
   const query = `db.collection('playlist').doc('${ctx.request.query.id}').get()`
   const res = (await callCloudDB(ctx, 'databasequery', query)).data
-  console.log(res)
+  // console.log(res)
 
   ctx.body = {
     code: 20000,
@@ -32,4 +32,29 @@ router.get('/getById', async (ctx, next) => {
   }
 })
 
+router.post('/updatePlaylist', async (ctx, next) => {
+  const params = ctx.request.body
+  const query = `db.collection('playlist').doc('${params._id}').update({
+    data:{
+      name:'${params.name}',
+      copywriter:'${params.copywriter}'
+    }
+  })`
+  const res = (await callCloudDB(ctx, 'databaseupdate', query)).data
+  ctx.body = {
+    code: 20000,
+    res
+  }
+})
+
+router.get('/del', async (ctx, next) => {
+  console.log(ctx.request.query)
+
+  const query = `db.collection('playlist').doc('${ctx.request.query.id}').remove()`
+  const res = (await callCloudDB(ctx, 'databasedelete', query)).data
+  ctx.body = {
+    code: 20000,
+    res
+  }
+})
 module.exports = router
